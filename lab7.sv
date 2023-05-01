@@ -88,7 +88,8 @@ module lab7 (
 	assign ARDUINO_IO[4] = 1'bz;
 	assign ARDUINO_IO[5] = 1'bz;
 //	assign ARDUINO_IO[2] = ARDUINO_IO[1];
-	i2s i2s(.clk(MAX10_CLK1_50), .rst(Reset_h), .start(1'b0), .lrclk(ARDUINO_IO[4]), .sclk(ARDUINO_IO[5]), .data_out(ARDUINO_IO[2]));
+	// i2s is moved to Platform Designer
+	// i2s i2s(.clk(MAX10_CLK1_50), .rst(Reset_h), .start(1'b0), .lrclk(ARDUINO_IO[4]), .sclk(ARDUINO_IO[5]), .data_out(ARDUINO_IO[2]));
 	
 	
 	assign ARDUINO_IO[9] = 1'bZ;
@@ -179,7 +180,13 @@ module lab7 (
 		.i2c_sda_in(i2c_serial_sda_in),
 		.i2c_scl_in(i2c_serial_scl_in),
 		.i2c_sda_oe(i2c_sda_oe),
-		.i2c_scl_oe(i2c_scl_oe)
+		.i2c_scl_oe(i2c_scl_oe),
+		
+		// i2s
+		.i2s_sclk(ARDUINO_IO[5]),
+		.i2s_lrclk(ARDUINO_IO[4]),
+		.i2s_start(1'b0),
+		.i2s_data_out(ARDUINO_IO[2])
 		
 	 );
 

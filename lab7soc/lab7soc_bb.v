@@ -9,6 +9,10 @@ module lab7soc (
 	i2c_scl_in,
 	i2c_sda_oe,
 	i2c_scl_oe,
+	i2s_sclk,
+	i2s_lrclk,
+	i2s_start,
+	i2s_i2s_dataout,
 	keycode_wire_export,
 	led_external_connection_export,
 	reset_reset_n,
@@ -45,6 +49,10 @@ module lab7soc (
 	input		i2c_scl_in;
 	output		i2c_sda_oe;
 	output		i2c_scl_oe;
+	input		i2s_sclk;
+	input		i2s_lrclk;
+	input		i2s_start;
+	output		i2s_i2s_dataout;
 	output	[7:0]	keycode_wire_export;
 	output	[13:0]	led_external_connection_export;
 	input		reset_reset_n;

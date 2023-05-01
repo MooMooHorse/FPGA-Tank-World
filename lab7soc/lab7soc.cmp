@@ -9,6 +9,10 @@
 			i2c_scl_in                     : in    std_logic                     := 'X';             -- scl_in
 			i2c_sda_oe                     : out   std_logic;                                        -- sda_oe
 			i2c_scl_oe                     : out   std_logic;                                        -- scl_oe
+			i2s_sclk                       : in    std_logic                     := 'X';             -- sclk
+			i2s_lrclk                      : in    std_logic                     := 'X';             -- lrclk
+			i2s_start                      : in    std_logic                     := 'X';             -- start
+			i2s_data_out                   : out   std_logic;                                        -- data_out
 			keycode_wire_export            : out   std_logic_vector(7 downto 0);                     -- export
 			led_external_connection_export : out   std_logic_vector(13 downto 0);                    -- export
 			reset_reset_n                  : in    std_logic                     := 'X';             -- reset_n

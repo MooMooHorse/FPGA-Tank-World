@@ -9,6 +9,10 @@
 			i2c_scl_in                     : in    std_logic                     := 'X';             -- scl_in
 			i2c_sda_oe                     : out   std_logic;                                        -- sda_oe
 			i2c_scl_oe                     : out   std_logic;                                        -- scl_oe
+			i2s_sclk                       : in    std_logic                     := 'X';             -- sclk
+			i2s_lrclk                      : in    std_logic                     := 'X';             -- lrclk
+			i2s_start                      : in    std_logic                     := 'X';             -- start
+			i2s_i2s_dataout                : out   std_logic;                                        -- i2s_dataout
 			keycode_wire_export            : out   std_logic_vector(7 downto 0);                     -- export
 			led_external_connection_export : out   std_logic_vector(13 downto 0);                    -- export
 			reset_reset_n                  : in    std_logic                     := 'X';             -- reset_n
@@ -49,6 +53,10 @@
 			i2c_scl_in                     => CONNECTED_TO_i2c_scl_in,                     --                        .scl_in
 			i2c_sda_oe                     => CONNECTED_TO_i2c_sda_oe,                     --                        .sda_oe
 			i2c_scl_oe                     => CONNECTED_TO_i2c_scl_oe,                     --                        .scl_oe
+			i2s_sclk                       => CONNECTED_TO_i2s_sclk,                       --                     i2s.sclk
+			i2s_lrclk                      => CONNECTED_TO_i2s_lrclk,                      --                        .lrclk
+			i2s_start                      => CONNECTED_TO_i2s_start,                      --                        .start
+			i2s_i2s_dataout                => CONNECTED_TO_i2s_i2s_dataout,                --                        .i2s_dataout
 			keycode_wire_export            => CONNECTED_TO_keycode_wire_export,            --            keycode_wire.export
 			led_external_connection_export => CONNECTED_TO_led_external_connection_export, -- led_external_connection.export
 			reset_reset_n                  => CONNECTED_TO_reset_reset_n,                  --                   reset.reset_n

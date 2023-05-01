@@ -13,6 +13,10 @@ module lab7soc (
 		input  wire        i2c_scl_in,                     //                        .scl_in
 		output wire        i2c_sda_oe,                     //                        .sda_oe
 		output wire        i2c_scl_oe,                     //                        .scl_oe
+		input  wire        i2s_sclk,                       //                     i2s.sclk
+		input  wire        i2s_lrclk,                      //                        .lrclk
+		input  wire        i2s_start,                      //                        .start
+		output wire        i2s_data_out,                   //                        .data_out
 		output wire [7:0]  keycode_wire_export,            //            keycode_wire.export
 		output wire [13:0] led_external_connection_export, // led_external_connection.export
 		input  wire        reset_reset_n,                  //                   reset.reset_n
@@ -61,6 +65,13 @@ module lab7soc (
 	wire         mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read;                 // mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_read -> jtag_uart_0:av_read_n
 	wire         mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write;                // mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_write -> jtag_uart_0:av_write_n
 	wire  [31:0] mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_writedata;            // mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_writedata -> jtag_uart_0:av_writedata
+	wire         mm_interconnect_0_sound_0_avalon_mm_slave1_chipselect;                // mm_interconnect_0:sound_0_avalon_mm_slave1_chipselect -> sound_0:AVL_CS
+	wire  [31:0] mm_interconnect_0_sound_0_avalon_mm_slave1_readdata;                  // sound_0:AVL_READDATA -> mm_interconnect_0:sound_0_avalon_mm_slave1_readdata
+	wire  [11:0] mm_interconnect_0_sound_0_avalon_mm_slave1_address;                   // mm_interconnect_0:sound_0_avalon_mm_slave1_address -> sound_0:AVL_ADDR
+	wire         mm_interconnect_0_sound_0_avalon_mm_slave1_read;                      // mm_interconnect_0:sound_0_avalon_mm_slave1_read -> sound_0:AVL_READ
+	wire   [3:0] mm_interconnect_0_sound_0_avalon_mm_slave1_byteenable;                // mm_interconnect_0:sound_0_avalon_mm_slave1_byteenable -> sound_0:AVL_BYTE_EN
+	wire         mm_interconnect_0_sound_0_avalon_mm_slave1_write;                     // mm_interconnect_0:sound_0_avalon_mm_slave1_write -> sound_0:AVL_WRITE
+	wire  [31:0] mm_interconnect_0_sound_0_avalon_mm_slave1_writedata;                 // mm_interconnect_0:sound_0_avalon_mm_slave1_writedata -> sound_0:AVL_WRITEDATA
 	wire         mm_interconnect_0_vga_text_mode_controller_0_avl_mm_slave_chipselect; // mm_interconnect_0:VGA_text_mode_controller_0_avl_mm_slave_chipselect -> VGA_text_mode_controller_0:AVL_CS
 	wire  [31:0] mm_interconnect_0_vga_text_mode_controller_0_avl_mm_slave_readdata;   // VGA_text_mode_controller_0:AVL_READDATA -> mm_interconnect_0:VGA_text_mode_controller_0_avl_mm_slave_readdata
 	wire  [11:0] mm_interconnect_0_vga_text_mode_controller_0_avl_mm_slave_address;    // mm_interconnect_0:VGA_text_mode_controller_0_avl_mm_slave_address -> VGA_text_mode_controller_0:AVL_ADDR
@@ -148,7 +159,7 @@ module lab7soc (
 	wire         irq_mapper_receiver2_irq;                                             // timer_0:irq -> irq_mapper:receiver2_irq
 	wire         irq_mapper_receiver3_irq;                                             // spi_0:irq -> irq_mapper:receiver3_irq
 	wire  [31:0] nios2_gen2_0_irq_irq;                                                 // irq_mapper:sender_irq -> nios2_gen2_0:irq
-	wire         rst_controller_reset_out_reset;                                       // rst_controller:reset_out -> [VGA_text_mode_controller_0:RESET, button:reset_n, hex:reset_n, i2c_0:rst_n, irq_mapper:reset, jtag_uart_0:rst_n, keycode:reset_n, led:reset_n, mm_interconnect_0:nios2_gen2_0_reset_reset_bridge_in_reset_reset, nios2_gen2_0:reset_n, onchip_memory2_0:reset, rst_translator:in_reset, sdram_pll:reset, spi_0:reset_n, switch:reset_n, sysid_qsys_0:reset_n, timer_0:reset_n, usb_gpx:reset_n, usb_irq:reset_n, usb_rst:reset_n]
+	wire         rst_controller_reset_out_reset;                                       // rst_controller:reset_out -> [VGA_text_mode_controller_0:RESET, button:reset_n, hex:reset_n, i2c_0:rst_n, irq_mapper:reset, jtag_uart_0:rst_n, keycode:reset_n, led:reset_n, mm_interconnect_0:nios2_gen2_0_reset_reset_bridge_in_reset_reset, nios2_gen2_0:reset_n, onchip_memory2_0:reset, rst_translator:in_reset, sdram_pll:reset, sound_0:RESET, spi_0:reset_n, switch:reset_n, sysid_qsys_0:reset_n, timer_0:reset_n, usb_gpx:reset_n, usb_irq:reset_n, usb_rst:reset_n]
 	wire         rst_controller_reset_out_reset_req;                                   // rst_controller:reset_req -> [nios2_gen2_0:reset_req, onchip_memory2_0:reset_req, rst_translator:reset_req_in]
 	wire         nios2_gen2_0_debug_reset_request_reset;                               // nios2_gen2_0:debug_reset_request -> [rst_controller:reset_in1, rst_controller_001:reset_in1]
 	wire         rst_controller_001_reset_out_reset;                                   // rst_controller_001:reset_out -> [mm_interconnect_0:sdram_reset_reset_bridge_in_reset_reset, sdram:reset_n]
@@ -344,6 +355,22 @@ module lab7soc (
 		.configupdate       (1'b0)                                             //           (terminated)
 	);
 
+	i2s sound_0 (
+		.CLK           (clk_clk),                                               //              CLK.clk
+		.RESET         (rst_controller_reset_out_reset),                        //            RESET.reset
+		.AVL_ADDR      (mm_interconnect_0_sound_0_avalon_mm_slave1_address),    // avalon_mm_slave1.address
+		.AVL_CS        (mm_interconnect_0_sound_0_avalon_mm_slave1_chipselect), //                 .chipselect
+		.AVL_BYTE_EN   (mm_interconnect_0_sound_0_avalon_mm_slave1_byteenable), //                 .byteenable
+		.AVL_WRITE     (mm_interconnect_0_sound_0_avalon_mm_slave1_write),      //                 .write
+		.AVL_READ      (mm_interconnect_0_sound_0_avalon_mm_slave1_read),       //                 .read
+		.AVL_WRITEDATA (mm_interconnect_0_sound_0_avalon_mm_slave1_writedata),  //                 .writedata
+		.AVL_READDATA  (mm_interconnect_0_sound_0_avalon_mm_slave1_readdata),   //                 .readdata
+		.sclk          (i2s_sclk),                                              //       i2s_export.sclk
+		.lrclk         (i2s_lrclk),                                             //                 .lrclk
+		.start         (i2s_start),                                             //                 .start
+		.data_out      (i2s_data_out)                                           //                 .data_out
+	);
+
 	lab7soc_spi_0 spi_0 (
 		.clk           (clk_clk),                                             //              clk.clk
 		.reset_n       (~rst_controller_reset_out_reset),                     //            reset.reset_n
@@ -488,6 +515,13 @@ module lab7soc (
 		.sdram_pll_pll_slave_read                           (mm_interconnect_0_sdram_pll_pll_slave_read),                           //                                         .read
 		.sdram_pll_pll_slave_readdata                       (mm_interconnect_0_sdram_pll_pll_slave_readdata),                       //                                         .readdata
 		.sdram_pll_pll_slave_writedata                      (mm_interconnect_0_sdram_pll_pll_slave_writedata),                      //                                         .writedata
+		.sound_0_avalon_mm_slave1_address                   (mm_interconnect_0_sound_0_avalon_mm_slave1_address),                   //                 sound_0_avalon_mm_slave1.address
+		.sound_0_avalon_mm_slave1_write                     (mm_interconnect_0_sound_0_avalon_mm_slave1_write),                     //                                         .write
+		.sound_0_avalon_mm_slave1_read                      (mm_interconnect_0_sound_0_avalon_mm_slave1_read),                      //                                         .read
+		.sound_0_avalon_mm_slave1_readdata                  (mm_interconnect_0_sound_0_avalon_mm_slave1_readdata),                  //                                         .readdata
+		.sound_0_avalon_mm_slave1_writedata                 (mm_interconnect_0_sound_0_avalon_mm_slave1_writedata),                 //                                         .writedata
+		.sound_0_avalon_mm_slave1_byteenable                (mm_interconnect_0_sound_0_avalon_mm_slave1_byteenable),                //                                         .byteenable
+		.sound_0_avalon_mm_slave1_chipselect                (mm_interconnect_0_sound_0_avalon_mm_slave1_chipselect),                //                                         .chipselect
 		.spi_0_spi_control_port_address                     (mm_interconnect_0_spi_0_spi_control_port_address),                     //                   spi_0_spi_control_port.address
 		.spi_0_spi_control_port_write                       (mm_interconnect_0_spi_0_spi_control_port_write),                       //                                         .write
 		.spi_0_spi_control_port_read                        (mm_interconnect_0_spi_0_spi_control_port_read),                        //                                         .read
